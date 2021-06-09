@@ -1,0 +1,26 @@
+body {
+	background-color: rgb(233, 243, 91);
+}
+header {
+	text-align: center;
+}
+main {
+	width: 600px;
+	margin: 3rem auto 0;
+}
+#gameboard {
+    display: grid;
+    width: 400px;
+    height: 400px;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    border: 2px solid;
+		margin: 0 auto;
+}
+#gameboard div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4.5rem;
+		border: 2px solid;
+}
