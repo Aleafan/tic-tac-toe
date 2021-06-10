@@ -4,12 +4,9 @@ const gameBoard = (() => {
 	const getBoard = () => board;
 
 	const renderBoard = () => {
-		const container = document.getElementById('gameboard');
 		const html = board.map((square, i) => `<div id='${i}'>${square}</div>`)
 				.join('');
 		container.innerHTML = html;
-		// Belongs here or in game or in global scope?
-		container.addEventListener('click', game.makeTurn);
 	}
 
 	const updateBoard = (id, mark) => board.splice(id, 1, mark);
@@ -30,28 +27,29 @@ const gameBoard = (() => {
 })();
 
 const game = (() => {
-	let turn = 0;
+	let player1Turn = true;
 
 	const makeTurn = (e) => {
 		const square = e.target;
 		if (!gameBoard.validateSquare(square)) return;
-		let mark = '';
-		if (!turn) {
-			console.log('Player 1');
-			mark = 'X';
-		} else {
-			console.log('Player 2');
-			mark = 'O';
-		}
-		square.textContent = mark;
-		gameBoard.updateBoard(square.id, mark);
-		turn = !turn;
+		const player = player1Turn ? player1 : player2;
+		square.textContent = player.mark;
+		gameBoard.updateBoard(square.id, player.mark);
+		player1Turn = !player1Turn;
 	}
-	
+
 	return {
 		makeTurn
 	}
 })();
 
+const Player = (name, mark) => {
+	return { name, mark }
+}
+
+const player1 = Player('Player 1', 'X');
+const player2 = Player('Player 2', 'O');
+const container = document.getElementById('gameboard');
 
 gameBoard.renderBoard();
+container.addEventListener('click', game.makeTurn);
