@@ -18,8 +18,8 @@ const gameBoard = (() => {
 	}
 	const displayResult = (winner) => {
 		infoDisplay.innerHTML = winner ? 
-				`<p>${winner.name} is the winner!</p>` :
-				'<p>It\'s a tie!</p>';
+				`<p class='result'>${winner.name} is the winner!</p>` :
+				'<p class="result">It\'s a tie!</p>';
 		playfield.removeEventListener('click', game.makeTurn);		
 	}
 	const toggleForm = (e) => {
@@ -189,7 +189,6 @@ const Player = (name, mark) => {
 	return { name, mark, changeName }
 }
 
-game.createPlayers();
 const playfield = document.getElementById('playfield');
 
 const btnStart = document.getElementById('btn-start');
@@ -212,3 +211,5 @@ btnCancel.addEventListener('click', gameBoard.toggleForm);
 
 const btnRestart = document.getElementById('btn-restart');
 btnRestart.addEventListener('click', game.startGame)
+
+game.createPlayers();

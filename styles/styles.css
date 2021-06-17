@@ -1,45 +1,56 @@
+@font-face {
+  font-family: "RoboboSlab";
+  src: url("../fonts/RobotoSlab.ttf");
+}
 * {
   box-sizing: border-box;
 }
 body {
-	background-color: rgb(233, 243, 91);
-  margin-left: 300px;
+  font-family: "RoboboSlab", serif;
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
+  background: url(../images/tic-tac-toe.png);
 }
 header {
   position: fixed;
   top: 0;
   left: 0;
-  width: 300px;
+  width: 350px;
   height: 100vh;
   box-shadow: 3px 0 3px black;
-  padding: 0.5rem 2rem;
+  padding: 2rem;
   text-align: center;
+  background-color: #F9ED44;
+}
+header h1 {
+  margin: 0 0 3rem;
 }
 .btn-control {
   display: block;
   width: 100%;
-  background-color: green;
-  color: yellow;
+  background-color: #A63A35;
+  color: white;
   padding: 0.5rem 0;
   margin: 2rem 0;
   font-weight: bold;
   border-radius: 10px;
-  box-shadow: 0 0 2px 2px white;
-  border: green;
+  border-color: #A63A35;
 }
 .btn-control:hover {
   cursor: pointer;
 }
 main {
-	width: 600px;
-	margin: 1rem auto 0;
+  flex-grow: 1;
+  align-self: center;
+	max-width: 650px;
+  margin-left: 350px;
 }
 .hidden {
   display: none!important;
 }
 #players-area {
-  width: 400px;
+  width: 600px;
   margin: 0 auto;
   text-align: center;
 }
@@ -48,7 +59,7 @@ main {
   position: absolute;
   top: 0;
   left: 0;
-  background: white;
+  background: #F9ED44;
   z-index: -1;
   border-radius: 10px;
   display: block;
@@ -57,9 +68,21 @@ main {
 #info-display {
   display: flex;
   justify-content: space-between;
-  font-size: 1.3rem;
-  margin: 2rem 0;
+  font-size: 1.6rem;
+  margin: 2rem 0 3rem;
+  border-top: 2px solid;
+  border-bottom: 2px solid;
 }
+#info-display p {
+  padding: 0.2rem 0;
+  margin: 0;
+}
+.result {
+  width: 100%;
+}
+/* #info-display p:nth-child(2) {
+  margin-left: auto;
+} */
 #form-names-div {
   position: fixed;
   top: 0;
@@ -109,6 +132,7 @@ label {
     border: 2px solid;
 		margin: 0 auto;
     transition: transform 0.3s ease-out;
+    background-color: white;
 }
 .transition {
   transform: scale(0)!important;
@@ -120,14 +144,14 @@ label {
   grid-template-rows: repeat(3, 1fr);
 }
 .highlight {
-  background-color: green;
+  background-color: #F9ED44;
 }
 #btn-start {
   width: 100%;
   height: 100%;
   font-size: 3rem;
-  background-color: green;
-  color: yellow;
+  background-color: #A63A35;
+  color: white;
 }
 #playfield div {
     display: flex;
@@ -138,4 +162,10 @@ label {
 }
 #playfield div:hover {
 	cursor: pointer;
+}
+footer {
+  z-index: 2;
+}
+footer p {
+  margin: 0;
 }
