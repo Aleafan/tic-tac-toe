@@ -1,76 +1,214 @@
 const gameBoard = (() => {
-    const board = ['', '', '', '', '', '', '', '', ''];
+    let board = ['', '', '', '', '', '', '', '', ''];
 	const getBoard = () => board;
-	const renderBoard = () => {
-		const html = board.map((square, i) => `<div id='${i}'>${square}</div>`)
-				.join('');
-		container.innerHTML = html;
-	}
+	const cleanBoard = () => board = ['', '', '', '', '', '', '', '', ''];
 	const updateBoard = (id, mark) => board.splice(id, 1, mark);
+	const renderBoard = () => {
+		playfield.classList.add('grid');
+		playfield.classList.remove('transition');
+		const html = board.map((square, i) => `<div data-id='${i}'>${square}</div>`).join('');
+		playfield.innerHTML = html;
+		playfield.addEventListener('click', game.makeTurn);		
+	}
+	const infoDisplay = document.getElementById('info-display');
+	const displayPlayers = (player1, player2) => {
+		const htmlPlayer1 = `<p id='name1'>${player1.mark} ${player1.name}</p>`;
+		const htmlPlayer2 = `<p id='name2'>${player2.name} ${player2.mark}</p>`;
+		infoDisplay.innerHTML = htmlPlayer1 + htmlPlayer2;
+	}
+	const displayResult = (winner) => {
+		infoDisplay.innerHTML = winner ? 
+				`<p>${winner.name} is the winner!</p>` :
+				'<p>It\'s a tie!</p>';
+		playfield.removeEventListener('click', game.makeTurn);		
+	}
+	const toggleForm = (e) => {
+		if (e.target === btnPlayers) {
+			namesForm.classList.remove('hidden');
+		} else if ([namesForm, btnSubmit, btnCancel].includes(e.target)) {
+			namesForm.classList.add('hidden');
+		}
+	}
 	const validateSquare = (square) => {
-		const id = square.id;
+		const id = square.dataset.id;
 		if (id === 'gameboard') return false;
 		if (board[id]) return false;
 		return true;
 	}
+	const highlightPath = (pathArray) => {
+		pathArray.forEach(id => {
+			const square = document.querySelector(`[data-id = '${id}']`);
+			square.classList.add('highlight');
+		});
+	}
     return {
 		getBoard,
-		renderBoard,
+		cleanBoard,
 		updateBoard,
-		validateSquare
+		renderBoard,
+		toggleForm,
+		displayPlayers,
+		validateSquare,
+		displayResult,
+		highlightPath,
 	}
 })();
 
 const game = (() => {
-	let player1Turn = true;
+	let player1Turn;
+	let player1, player2;
+	let gameIsFinished = false;
+
+	const createPlayers = () => {
+		const name1 = document.getElementById('player1').value;
+		const name2 = document.getElementById('player2').value;
+		player1 = Player(name1, 'X');
+		player2 = Player(name2, 'O');
+		gameBoard.displayPlayers(player1, player2);
+	}
+	const changePlayers = (e) => {
+		const name1 = document.getElementById('player1').value;
+		const name2 = document.getElementById('player2').value;
+		player1.changeName(name1);
+		player2.changeName(name2);
+		if (!gameIsFinished) {
+			gameBoard.displayPlayers(player1, player2);
+		}
+		gameBoard.toggleForm(e);
+	}
+	const swapPlayers = () => {
+		const name1 = player1.name;
+		player1.changeName(player2.name);
+		player2.changeName(name1);
+		if (!gameIsFinished) {
+			gameBoard.displayPlayers(player1, player2);
+		}
+	}
+	const startGame = () => {
+		gameBoard.cleanBoard();
+		gameBoard.displayPlayers(player1, player2);
+		gameIsFinished = false;
+		player1Turn = true;
+		playfield.addEventListener('transitionend', gameBoard.renderBoard);
+		playfield.classList.add('transition');
+		highlightCurrPlayer(player1Turn);
+	}
 	const makeTurn = (e) => {
 		const square = e.target;
 		if (!gameBoard.validateSquare(square)) return;
 		const player = player1Turn ? player1 : player2;
 		square.textContent = player.mark;
-		gameBoard.updateBoard(square.id, player.mark);
+		gameBoard.updateBoard(square.dataset.id, player.mark);
 		player1Turn = !player1Turn;
+		highlightCurrPlayer(player1Turn);
 		checkResult();
+	}
+	const setHighlight = (selector) => {
+		const element = document.querySelector(selector);
+		if (!element) return setHighlight('header h1');
+		const elementCoords = element.getBoundingClientRect();
+		const coords = {
+			width: elementCoords.width + 10,
+			height: elementCoords.height,
+			top: elementCoords.top + window.scrollY,
+			left: elementCoords.left + window.scrollX - 5,
+		}
+		highlight.style.width = `${coords.width}px`;
+		highlight.style.height = `${coords.height}px`;
+		highlight.style.transform = `translate(${coords.left}px, ${coords.top}px)`;
+	}
+	const highlightCurrPlayer = (player1Turn) => {
+		const selector = player1Turn ? '#name1' : '#name2';
+		setHighlight(selector);
 	}
 	const checkResult = () => {
 		const board = gameBoard.getBoard();
 		// Check for win
-		let mark = '';
-		if (board[0] && ((board[0] === board[1] && board[0] === board[2]) 
-					|| (board[0] === board[3] && board[0] === board[6])
-					|| (board[0] === board[4] && board[0] === board[8]))) {
-			mark = board[0];	
+		let winnerMark = '';
+		let winner = '';
+		if (board[0]) {
+			if (board[0] === board[1] && board[0] === board[2]) {
+				winnerMark = board[0];
+				gameBoard.highlightPath([0, 1, 2]);
+			} else if (board[0] === board[3] && board[0] === board[6]) {
+				winnerMark = board[0];
+				gameBoard.highlightPath([0, 3, 6]);
+			} else if (board[0] === board[4] && board[0] === board[8]) {
+				winnerMark = board[0];
+				gameBoard.highlightPath([0, 4, 8]);
+			}
 		}
-		else if (board[4] && ((board[4] === board[3] && board[4] === board[5]) 
-					|| (board[4] === board[1] && board[4] === board[7])
-					|| (board[4] === board[2] && board[4] === board[6]))) {
-			mark = board[4];
+		if (board[4]) {
+			if (board[4] === board[3] && board[4] === board[5]) {
+				winnerMark = board[4];
+				gameBoard.highlightPath([3, 4, 5]);
+			} else if (board[4] === board[1] && board[4] === board[7]) {
+				winnerMark = board[4];
+				gameBoard.highlightPath([1, 4, 7]);
+			} else if (board[4] === board[2] && board[4] === board[6]) {
+				winnerMark = board[4];
+				gameBoard.highlightPath([2, 4, 6]);
+			}
 		}
-		else if (board[8] && ((board[8] === board[6] && board[8] === board[7]) 
-					|| (board[8] === board[2] && board[8] === board[5]))) {
-			mark = board[8];		
+		if (board[8]) {
+			if (board[8] === board[6] && board[8] === board[7]) {
+				winnerMark = board[8];
+				gameBoard.highlightPath([6, 7, 8]);
+			} else if (board[8] === board[2] && board[8] === board[5]) {
+				winnerMark = board[8];
+				gameBoard.highlightPath([2, 5, 8]);
+			}
 		}
-		const message = mark === 'X' ? 'Player 1 wins!' 
-				: mark === 'O' ? 'Player 2 wins'
-				: null;
-		if (message) return console.log(message);
-		// Check for tie
-		if (!board.includes('')) {
-			return console.log("It's a tie!");
+		if (!winnerMark && board.includes('')) return;
+		if (winnerMark) {
+			winner = winnerMark === player1.mark ? player1 : player2;
 		}
+		gameBoard.displayResult(winner);
+		setHighlight('#info-display p');
+		gameIsFinished = true;
 	};
+	// Create and set highlight element
+	const highlight = document.createElement('span');
+  	highlight.classList.add('highlight-player');	
+  	document.body.appendChild(highlight);
+	setHighlight('header h1');
+
 	return {
-		makeTurn
+		createPlayers,
+		changePlayers,
+		swapPlayers,
+		startGame,
+		makeTurn,
 	}
 })();
 
 const Player = (name, mark) => {
-	return { name, mark }
+	const changeName = function(newName) {
+		this.name = newName;
+	}
+	return { name, mark, changeName }
 }
 
-const player1 = Player('Player 1', 'X');
-const player2 = Player('Player 2', 'O');
-const container = document.getElementById('gameboard');
+game.createPlayers();
+const playfield = document.getElementById('playfield');
 
-gameBoard.renderBoard();
-container.addEventListener('click', game.makeTurn);
+const btnStart = document.getElementById('btn-start');
+btnStart.addEventListener('click', game.startGame);
+
+const btnSwap = document.getElementById('btn-swap');
+btnSwap.addEventListener('click', game.swapPlayers);
+
+const btnPlayers = document.getElementById('btn-players');
+btnPlayers.addEventListener('click', gameBoard.toggleForm);
+
+const namesForm = document.getElementById('form-names-div');
+namesForm.addEventListener('click', gameBoard.toggleForm);
+
+const btnSubmit = document.getElementById('btn-submit');
+btnSubmit.addEventListener('click', game.changePlayers);
+
+const btnCancel = document.getElementById('btn-cancel');
+btnCancel.addEventListener('click', gameBoard.toggleForm);
+
+const btnRestart = document.getElementById('btn-restart');
+btnRestart.addEventListener('click', game.startGame)
