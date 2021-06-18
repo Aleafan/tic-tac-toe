@@ -11,7 +11,18 @@ const gameBoard = (() => {
 	const renderBoard = () => {
 		playfield.classList.add('grid');
 		playfield.classList.remove('transition');
-		const html = board.map((square, i) => `<div data-id='${i}'>${square}</div>`).join('');
+		const bottomBorder = [0, 1, 2, 3, 4, 5];
+		const rightBorder = [0, 1, 3, 4, 6, 7];
+		const html = board.map((square, i) => {
+			let className = '';
+			if (bottomBorder.includes(i)) {
+				className += 'border-bottom';
+			}
+			if (rightBorder.includes(i)) {
+				className += ' border-right';
+			}
+			return `<div data-id='${i}' class='${className}'>${square}</div>`;
+		}).join('');
 		playfield.innerHTML = html;
 		playfield.addEventListener('click', game.makeTurn);		
 	}
