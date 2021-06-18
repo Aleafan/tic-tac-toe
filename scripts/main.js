@@ -1,5 +1,10 @@
 const gameBoard = (() => {
-    let board = ['', '', '', '', '', '', '', '', ''];
+	// Declare variables
+	let board = ['', '', '', '', '', '', '', '', ''];
+	const playfield = document.getElementById('playfield');
+	const btnSubmit = document.getElementById('btn-submit');
+	const infoDisplay = document.getElementById('info-display');
+    
 	const getBoard = () => board;
 	const cleanBoard = () => board = ['', '', '', '', '', '', '', '', ''];
 	const updateBoard = (id, mark) => board.splice(id, 1, mark);
@@ -10,7 +15,6 @@ const gameBoard = (() => {
 		playfield.innerHTML = html;
 		playfield.addEventListener('click', game.makeTurn);		
 	}
-	const infoDisplay = document.getElementById('info-display');
 	const displayPlayers = (player1, player2) => {
 		const htmlPlayer1 = `<p id='name1'>${player1.mark} ${player1.name}</p>`;
 		const htmlPlayer2 = `<p id='name2'>${player2.name} ${player2.mark}</p>`;
@@ -41,6 +45,17 @@ const gameBoard = (() => {
 			square.classList.add('highlight');
 		});
 	}
+
+	// Event listeners
+	const btnPlayers = document.getElementById('btn-players');
+	btnPlayers.addEventListener('click', toggleForm);
+
+	const namesForm = document.getElementById('form-names-div');
+	namesForm.addEventListener('click', toggleForm);
+
+	const btnCancel = document.getElementById('btn-cancel');
+	btnCancel.addEventListener('click', toggleForm);
+
     return {
 		getBoard,
 		cleanBoard,
@@ -54,10 +69,19 @@ const gameBoard = (() => {
 	}
 })();
 
+const Player = (name, mark) => {
+	const changeName = function(newName) {
+		this.name = newName;
+	}
+	return { name, mark, changeName }
+}
+
 const game = (() => {
+	// Declare variables
 	let player1Turn;
 	let player1, player2;
 	let gameIsFinished = false;
+	const playfield = document.getElementById('playfield');
 
 	const createPlayers = () => {
 		const name1 = document.getElementById('player1').value;
@@ -91,7 +115,7 @@ const game = (() => {
 		player1Turn = true;
 		playfield.addEventListener('transitionend', gameBoard.renderBoard);
 		playfield.classList.add('transition');
-		highlightCurrPlayer(player1Turn);
+		setHighlight('#name1');
 	}
 	const makeTurn = (e) => {
 		const square = e.target;
@@ -100,7 +124,7 @@ const game = (() => {
 		square.textContent = player.mark;
 		gameBoard.updateBoard(square.dataset.id, player.mark);
 		player1Turn = !player1Turn;
-		highlightCurrPlayer(player1Turn);
+		player1Turn ? setHighlight('#name1') : setHighlight('#name2')
 		checkResult();
 	}
 	const setHighlight = (selector) => {
@@ -116,10 +140,6 @@ const game = (() => {
 		highlight.style.width = `${coords.width}px`;
 		highlight.style.height = `${coords.height}px`;
 		highlight.style.transform = `translate(${coords.left}px, ${coords.top}px)`;
-	}
-	const highlightCurrPlayer = (player1Turn) => {
-		const selector = player1Turn ? '#name1' : '#name2';
-		setHighlight(selector);
 	}
 	const checkResult = () => {
 		const board = gameBoard.getBoard();
@@ -167,49 +187,29 @@ const game = (() => {
 		setHighlight('#info-display p');
 		gameIsFinished = true;
 	};
-	// Create and set highlight element
+
+	// Create highlighter element
 	const highlight = document.createElement('span');
   	highlight.classList.add('highlight-player');	
   	document.body.appendChild(highlight);
-	setHighlight('header h1');
+	
+	// Event listeners
+	const btnStart = document.getElementById('btn-start');
+	btnStart.addEventListener('click', startGame);
+
+	const btnRestart = document.getElementById('btn-restart');
+	btnRestart.addEventListener('click', startGame);
+
+	const btnSwap = document.getElementById('btn-swap');
+	btnSwap.addEventListener('click', swapPlayers);
+
+	const btnSubmit = document.getElementById('btn-submit');
+	btnSubmit.addEventListener('click', changePlayers);
+
+	createPlayers();
 
 	return {
-		createPlayers,
-		changePlayers,
-		swapPlayers,
-		startGame,
 		makeTurn,
 	}
 })();
 
-const Player = (name, mark) => {
-	const changeName = function(newName) {
-		this.name = newName;
-	}
-	return { name, mark, changeName }
-}
-
-const playfield = document.getElementById('playfield');
-
-const btnStart = document.getElementById('btn-start');
-btnStart.addEventListener('click', game.startGame);
-
-const btnSwap = document.getElementById('btn-swap');
-btnSwap.addEventListener('click', game.swapPlayers);
-
-const btnPlayers = document.getElementById('btn-players');
-btnPlayers.addEventListener('click', gameBoard.toggleForm);
-
-const namesForm = document.getElementById('form-names-div');
-namesForm.addEventListener('click', gameBoard.toggleForm);
-
-const btnSubmit = document.getElementById('btn-submit');
-btnSubmit.addEventListener('click', game.changePlayers);
-
-const btnCancel = document.getElementById('btn-cancel');
-btnCancel.addEventListener('click', gameBoard.toggleForm);
-
-const btnRestart = document.getElementById('btn-restart');
-btnRestart.addEventListener('click', game.startGame)
-
-game.createPlayers();

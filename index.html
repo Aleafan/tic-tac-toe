@@ -19,36 +19,40 @@
 
 	<body>
 		<header>
-			<h1><u>Tic Tac Toe</u></h1>
-			<button id='btn-restart' class='btn-control' type='button'>New game</button>
-			<button id='btn-swap' class='btn-control' type='button'>Swap players</button>
-			<button id='btn-players' class='btn-control' type='button'>Change names</button>
+			<h1>Tic Tac Toe</h1>
+			<div id='menus'>
+				<button id='btn-restart' class='btn-control' type='button'>New game</button>
+				<button id='btn-swap' class='btn-control' type='button'>Swap players</button>
+				<button id='btn-players' class='btn-control' type='button'>Change name</button>
+			</div>
 		</header>
+
 		<main>
-			<div id='players-area'>
-				<div id='form-names-div' class='hidden'>
-					<div id='form-names'>
-						<h2>Please enter your names:</h2>
-						<form onsubmit="return false">
-							<label>Player X
-								<input id='player1' type='text' value='Luke Skywalker'>
-							</label>
-							<label>Player O
-								<input id='player2' type='text' value='Darth Vader'>
-							</label>
-						</form>
-						<div id='form-confirm'>
-							<button id='btn-submit' class='btn-form' type='button'>Submit</button>
-							<button id='btn-cancel' class='btn-form' type='button'>Cancel</button>
-						</div>
+			<div id='form-names-div' class='hidden'>
+				<div id='form-names'>
+					<h2>Please enter your names:</h2>
+					<form onsubmit="return false">
+						<label>Player X
+							<input id='player1' type='text' value='Luke Skywalker'>
+						</label>
+						<label>Player O
+							<input id='player2' type='text' value='Darth Vader'>
+						</label>
+					</form>
+					<div id='form-confirm'>
+						<button id='btn-submit' class='btn-form' type='button'>Submit</button>
+						<button id='btn-cancel' class='btn-form' type='button'>Cancel</button>
 					</div>
 				</div>
-				<div id='info-display'/>
 			</div>
-			<div id='playfield'>
-				<button id='btn-start' type='button'>START GAME!</button>
+			<div id='info-display'></div>
+			<div id='playfield-container'>
+				<div id='playfield'>
+					<button id='btn-start' type='button'>START GAME!</button>
+				</div>
 			</div>
 		</main>
+		
 		<footer>
 			<p>&copy; 2021, Aleafan</p>
 		</footer>

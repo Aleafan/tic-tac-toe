@@ -2,40 +2,59 @@
   font-family: "RoboboSlab";
   src: url("../fonts/RobotoSlab.ttf");
 }
+:root {
+  --main-color: #F9ED44;
+  --secondary-color: #A63A35;
+}
 * {
   box-sizing: border-box;
+}
+html {
+  height: 100%;
 }
 body {
   font-family: "RoboboSlab", serif;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  min-height: 100%;
   background: url(../images/tic-tac-toe.png);
 }
 header {
   position: fixed;
   top: 0;
   left: 0;
+  display: flex;
+  flex-direction: column;
   width: 350px;
-  height: 100vh;
+  height: 100%;
   box-shadow: 3px 0 3px black;
-  padding: 2rem;
   text-align: center;
-  background-color: #F9ED44;
+  background-color: var(--main-color);
 }
 header h1 {
-  margin: 0 0 3.2rem;
+  line-height: 40px;
+  margin: 2rem 0 0;
+  border-top: 2px solid;
+  border-bottom: 2px solid;
+  font-style: italic;
+}
+#menus {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 1.5rem;
+  margin-bottom: 1.15rem;
 }
 .btn-control {
   display: block;
-  width: 100%;
-  background-color: #A63A35;
+  background-color: var(--secondary-color);
   color: white;
   padding: 0.5rem 0;
-  margin: 2rem 0;
+  margin: 2.5rem 0;
   font-weight: bold;
   border-radius: 10px;
-  border-color: #A63A35;
+  border-color: var(--secondary-color);
   transition: all 0.2s;
 }
 .btn-control:hover {
@@ -45,23 +64,21 @@ header h1 {
 main {
   flex-grow: 1;
   align-self: center;
-	max-width: 650px;
+  display: flex;
+  flex-direction: column;
+	width: 600px;
   margin-left: 350px;
+  text-align: center;
 }
 .hidden {
   display: none!important;
-}
-#players-area {
-  width: 600px;
-  margin: 0 auto;
-  text-align: center;
 }
 .highlight-player {
   transition: all 0.5s;
   position: absolute;
   top: 0;
   left: 0;
-  background: #F9ED44;
+  background: var(--main-color);
   z-index: -1;
   border-radius: 10px;
   display: block;
@@ -71,12 +88,13 @@ main {
   display: flex;
   justify-content: space-between;
   font-size: 1.6rem;
-  margin: 2rem 0 3rem;
+  font-weight: bold;
+  line-height: 40px;
+  margin-top: 2rem;
   border-top: 2px solid;
   border-bottom: 2px solid;
 }
 #info-display p {
-  padding: 0.2rem 0;
   margin: 0;
 }
 .result {
@@ -88,18 +106,11 @@ main {
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 2;
+  z-index: 3;
   background: rgba(0, 0, 0, 0.85);
   animation-name: appear;
   animation-duration: 0.3s;
   overflow-y: scroll;
-}
-@keyframes appear {
-  from {
-      transform: scale(0.5);
-      z-index: 2;
-  }
-  to { transform: scale(1); }
 }
 #form-names {
   display: flex;
@@ -108,7 +119,7 @@ main {
   max-width: 600px;
   height: 100%;
   margin: 0 auto;
-  background-color: #F9ED44;
+  background-color: var(--main-color);
 }
 #form-names input {
   margin-left: 1rem;
@@ -123,12 +134,12 @@ main {
 .btn-form {
   width: 25%;
   margin: 1rem;
-  background-color: #A63A35;
+  background-color: var(--secondary-color);
   color: white;
   padding: 0.5rem 0;
   font-weight: bold;
   border-radius: 10px;
-  border-color: #A63A35;
+  border-color: var(--secondary-color);
   transition: all 0.2s;
 }
 .btn-form:hover {
@@ -138,6 +149,12 @@ main {
 label {
   display: block;
   margin-bottom: 1rem;
+}
+#playfield-container {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 #playfield {
     width: 400px;
@@ -157,15 +174,16 @@ label {
   grid-template-rows: repeat(3, 1fr);
 }
 .highlight {
-  background-color: #F9ED44;
+  background-color: var(--main-color);
 }
 #btn-start {
   width: 100%;
   height: 100%;
   font-size: 3rem;
-  background-color: #A63A35;
-  border-color: #A63A35;
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
   color: white;
+  cursor: pointer;
 }
 #playfield div {
     display: flex;
@@ -181,5 +199,90 @@ footer {
   z-index: 2;
 }
 footer p {
-  margin: 0;
+  margin: 0.1rem 0;
+}
+@keyframes appear {
+  from {
+      transform: scale(0.5);
+      z-index: 2;
+  }
+  to { transform: scale(1); }
+}
+@media (max-width: 980px) {
+  header {
+    width: 250px;
+  }
+  main {
+    margin-left: 250px;
+  }
+}
+@media (max-width: 880px) {
+  main {
+    width: 400px;
+  }
+  #info-display {
+    font-size: 1.3rem;
+  }
+}
+@media (max-width: 700px) {
+  header {
+    position: static;
+    display: block;
+    height: auto;
+    width: 100vw;
+    box-shadow: 0 3px 3px black;
+  }
+  header h1 {
+      margin: 0;
+      padding: 0.2rem 0;
+      border: none;
+      text-decoration: underline;
+  }
+  #menus {
+      padding: 0;
+      margin-bottom: 0;
+      flex-direction: row;
+      justify-content: space-evenly;
+  }
+  .btn-control {
+    padding: 0.5rem 0;
+    margin: 0.5rem 2px;
+    flex: 1 1 104px;
+  }
+  main {
+    justify-content: space-evenly;
+    width: 100%;
+    padding: 0 5px;
+    margin-left: 0;
+  }
+  #playfield-container {
+    flex-grow: 0;
+    margin-top: 0.5rem;
+  }
+  #playfield {
+    width: 350px;
+    height: 350px;
+  }
+  #playfield div {
+    font-size: 4rem;
+  }
+  #info-display {
+    margin-top: 0.7rem;
+    font-size: 1.2rem;
+  }
+}
+@media (max-width: 360px) {
+  #playfield {
+    width: 330px;
+    height: 330px;
+  }
+}
+@media (max-width: 340px) {
+  #playfield {
+    width: 310px;
+    height: 310px;
+  }
+  .btn-control {
+    font-size: 14px;
+  }
 }
