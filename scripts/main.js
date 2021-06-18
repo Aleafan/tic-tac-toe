@@ -143,42 +143,28 @@ const game = (() => {
 	}
 	const checkResult = () => {
 		const board = gameBoard.getBoard();
-		// Check for win
-		let winnerMark = '';
 		let winner = '';
-		if (board[0]) {
-			if (board[0] === board[1] && board[0] === board[2]) {
-				winnerMark = board[0];
-				gameBoard.highlightPath([0, 1, 2]);
-			} else if (board[0] === board[3] && board[0] === board[6]) {
-				winnerMark = board[0];
-				gameBoard.highlightPath([0, 3, 6]);
-			} else if (board[0] === board[4] && board[0] === board[8]) {
-				winnerMark = board[0];
-				gameBoard.highlightPath([0, 4, 8]);
+		const winConditions = [
+			[0, 1, 2],
+			[0, 3, 6],
+			[0, 4, 8],
+			[3, 4, 5],
+			[1, 4, 7],
+			[2, 4, 6],
+			[6, 7, 8],
+			[2, 5, 8],
+		];
+		let winnerMark = winConditions.reduce((accum, condition) => {
+			let mark = board[condition[0]];
+			if (!mark) return accum;
+			for (let i = 1; i < condition.length; i++) {
+				if (mark !== board[condition[i]]) {
+					return accum;
+				}
 			}
-		}
-		if (board[4]) {
-			if (board[4] === board[3] && board[4] === board[5]) {
-				winnerMark = board[4];
-				gameBoard.highlightPath([3, 4, 5]);
-			} else if (board[4] === board[1] && board[4] === board[7]) {
-				winnerMark = board[4];
-				gameBoard.highlightPath([1, 4, 7]);
-			} else if (board[4] === board[2] && board[4] === board[6]) {
-				winnerMark = board[4];
-				gameBoard.highlightPath([2, 4, 6]);
-			}
-		}
-		if (board[8]) {
-			if (board[8] === board[6] && board[8] === board[7]) {
-				winnerMark = board[8];
-				gameBoard.highlightPath([6, 7, 8]);
-			} else if (board[8] === board[2] && board[8] === board[5]) {
-				winnerMark = board[8];
-				gameBoard.highlightPath([2, 5, 8]);
-			}
-		}
+			gameBoard.highlightPath(condition);
+			return mark;
+		}, '');
 		if (!winnerMark && board.includes('')) return;
 		if (winnerMark) {
 			winner = winnerMark === player1.mark ? player1 : player2;
@@ -212,4 +198,3 @@ const game = (() => {
 		makeTurn,
 	}
 })();
-
