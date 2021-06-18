@@ -191,9 +191,6 @@ const game = (() => {
   	document.body.appendChild(highlight);
 	
 	// Event listeners
-	const btnStart = document.getElementById('btn-start');
-	btnStart.addEventListener('click', startGame);
-
 	const btnRestart = document.getElementById('btn-restart');
 	btnRestart.addEventListener('click', startGame);
 
@@ -204,6 +201,7 @@ const game = (() => {
 	btnSubmit.addEventListener('click', changePlayers);
 
 	createPlayers();
+	startGame();
 
 	return {
 		makeTurn,
