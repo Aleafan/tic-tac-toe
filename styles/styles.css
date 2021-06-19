@@ -3,7 +3,7 @@
   src: url("../fonts/RobotoSlab.ttf");
 }
 :root {
-  --main-color: #f7ea41;
+  --main-color: #f4e835;
   --secondary-color: #A63A35;
 }
 * {
@@ -36,7 +36,6 @@ header h1 {
   margin: 2rem 0 0;
   border-top: 2px solid;
   border-bottom: 2px solid;
-  font-style: italic;
 }
 #menus {
   flex-grow: 1;
@@ -190,10 +189,10 @@ label {
     justify-content: center;
     font-size: 4.5rem;
 }
-.border-right {
+.b-right {
   border-right: 4px solid;
 }
-.border-bottom {
+.b-bottom {
   border-bottom: 4px solid;
 }
 #playfield div:hover {

@@ -6,25 +6,15 @@ const gameBoard = (() => {
 	const infoDisplay = document.getElementById('info-display');
     
 	const getBoard = () => board;
-	const cleanBoard = () => board = ['', '', '', '', '', '', '', '', ''];
 	const updateBoard = (id, mark) => board.splice(id, 1, mark);
-	const renderBoard = () => {
-		playfield.classList.add('grid');
+	const cleanBoard = () => {
 		playfield.classList.remove('transition');
-		const bottomBorder = [0, 1, 2, 3, 4, 5];
-		const rightBorder = [0, 1, 3, 4, 6, 7];
-		const html = board.map((square, i) => {
-			let className = '';
-			if (bottomBorder.includes(i)) {
-				className += 'border-bottom';
-			}
-			if (rightBorder.includes(i)) {
-				className += ' border-right';
-			}
-			return `<div data-id='${i}' class='${className}'>${square}</div>`;
-		}).join('');
-		playfield.innerHTML = html;
-		playfield.addEventListener('click', game.makeTurn);		
+		board = ['', '', '', '', '', '', '', '', ''];
+		const squares = document.querySelectorAll('[data-id]');
+		squares.forEach(square => {
+			square.textContent = '';
+			square.classList.remove('highlight');
+		});
 	}
 	const displayPlayers = (player1, player2) => {
 		const htmlPlayer1 = `<p id='name1'>${player1.mark} ${player1.name}</p>`;
@@ -35,7 +25,6 @@ const gameBoard = (() => {
 		infoDisplay.innerHTML = winner ? 
 				`<p class='result'>${winner.name} is the winner!</p>` :
 				'<p class="result">It\'s a tie!</p>';
-		playfield.removeEventListener('click', game.makeTurn);		
 	}
 	const toggleForm = (e) => {
 		if (e.target === btnPlayers) {
@@ -58,6 +47,8 @@ const gameBoard = (() => {
 	}
 
 	// Event listeners
+	playfield.addEventListener('transitionend', cleanBoard);
+
 	const btnPlayers = document.getElementById('btn-players');
 	btnPlayers.addEventListener('click', toggleForm);
 
@@ -71,7 +62,6 @@ const gameBoard = (() => {
 		getBoard,
 		cleanBoard,
 		updateBoard,
-		renderBoard,
 		toggleForm,
 		displayPlayers,
 		validateSquare,
@@ -89,7 +79,7 @@ const Player = (name, mark) => {
 
 const game = (() => {
 	// Declare variables
-	let player1Turn;
+	let player1Turn = true;
 	let player1, player2;
 	let gameIsFinished = false;
 	const playfield = document.getElementById('playfield');
@@ -99,7 +89,6 @@ const game = (() => {
 		const name2 = document.getElementById('player2').value;
 		player1 = Player(name1, 'X');
 		player2 = Player(name2, 'O');
-		gameBoard.displayPlayers(player1, player2);
 	}
 	const changePlayers = (e) => {
 		const name1 = document.getElementById('player1').value;
@@ -120,13 +109,18 @@ const game = (() => {
 		}
 	}
 	const startGame = () => {
-		gameBoard.cleanBoard();
+		createPlayers();
+		gameBoard.displayPlayers(player1, player2);
+		setHighlight('#name1');
+		playfield.addEventListener('click', makeTurn);
+	}
+	const restartGame = () => {
+		playfield.classList.add('transition');
 		gameBoard.displayPlayers(player1, player2);
 		gameIsFinished = false;
 		player1Turn = true;
-		playfield.addEventListener('transitionend', gameBoard.renderBoard);
-		playfield.classList.add('transition');
 		setHighlight('#name1');
+		playfield.addEventListener('click', makeTurn);
 	}
 	const makeTurn = (e) => {
 		const square = e.target;
@@ -140,7 +134,7 @@ const game = (() => {
 	}
 	const setHighlight = (selector) => {
 		const element = document.querySelector(selector);
-		if (!element) return setHighlight('header h1');
+		if (!element) return
 		const elementCoords = element.getBoundingClientRect();
 		const coords = {
 			width: elementCoords.width + 10,
@@ -181,6 +175,7 @@ const game = (() => {
 			winner = winnerMark === player1.mark ? player1 : player2;
 		}
 		gameBoard.displayResult(winner);
+		playfield.removeEventListener('click', makeTurn);
 		setHighlight('#info-display p');
 		gameIsFinished = true;
 	};
@@ -192,7 +187,7 @@ const game = (() => {
 	
 	// Event listeners
 	const btnRestart = document.getElementById('btn-restart');
-	btnRestart.addEventListener('click', startGame);
+	btnRestart.addEventListener('click', restartGame);
 
 	const btnSwap = document.getElementById('btn-swap');
 	btnSwap.addEventListener('click', swapPlayers);
@@ -200,10 +195,5 @@ const game = (() => {
 	const btnSubmit = document.getElementById('btn-submit');
 	btnSubmit.addEventListener('click', changePlayers);
 
-	createPlayers();
-	startGame();
-
-	return {
-		makeTurn,
-	}
+	return startGame();
 })();
